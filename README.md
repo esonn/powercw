@@ -75,8 +75,17 @@ Create 3-letter words using only the letters F, L, D and U. A total number of
 30 characters are created, and the corresponding morse code is played using
 beeps on your audio device:
 
-    cw-drill -chars "fldu" -3 -run 30
+    ./cw-drill -chars "fldu" -3 -run 30
 
 
+Create 3-letter words using the first 5 letters from the toad sequence,
+prefix the transmission with 3x CQ with 12 characters in total and play
+generated sequence afterwards (listing includes output):
 
+    ./cw-drill.pl -toad 5 -wpm 15 -cq -3 -run 12                                                              16:06
+    cq cq cq ede aae wtn dax 
+    CW message:  cq cq cq ede aae ntn dan
+    Your copy:   cq cq cq ede aae wtn dax 
+    Your score:  87% (distance 3)
+      --Seems OK!
 
