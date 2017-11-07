@@ -80,9 +80,9 @@ beeps on your audio device:
 
 Create 3-letter words using the first 5 letters from the toad sequence,
 prefix the transmission with 3x CQ with 12 characters in total and play
-generated sequence afterwards (listing includes output):
+generated sequence afterwards with 15 words per minute (listing includes output):
 
-    ./cw-drill.pl -toad 5 -wpm 15 -cq -3 -run 12                                                              16:06
+    ./cw-drill.pl -toad 5 -wpm 15 -cq -3 -run 12
     cq cq cq ede aae wtn dax 
     CW message:  cq cq cq ede aae ntn dan
     Your copy:   cq cq cq ede aae wtn dax 
