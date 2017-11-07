@@ -1,4 +1,4 @@
-# cw-drill
+# cw-drill: Enhance your morse (CW) skills!
 cw-drill is a simple training application for learning morse code (CW). It
 generates randomized but configurable text patterns and can play the
 corresponding morse code on an audio device using the cw(1) command line utility
