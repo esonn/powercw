@@ -3,7 +3,7 @@
 # certain character classes, word grouping and letter quantity. It is primarily
 # intended to be used when learning morse-code and in conjunction with the
 # CW command line utility.
-# (c) 2017 Erik Sonnleitner
+# (c) 2017 Erik Sonnleitner, es<at>delta-xi.net
 
 use List::Util qw(shuffle min);
 use Getopt::Long;
@@ -23,28 +23,24 @@ GetOptions(
     "s" => \$in_special,
     "h" => \$in_help,
     "help" => \$in_help,
-    "run" => \$in_runcw,   #unused
+    "run" => \$in_runcw,
     "cq" => \$in_preamblecq,
     "pre" => \$in_preamble,
     "wait" => \$in_wait,
-
-    # options for cw
     "wpm=i" => \$in_wpm,
     "gap=i" => \$in_gap,
     "tone=i" => \$in_tone,
 );
 
 
-
 sub validate_args {
-    if($in_usebi + $in_usetri + $in_usequad + $in_usepent +
-    $in_usehex + $in_usesept + $in_useoct > 1) {
-        die "Group sizes are mutually exclusive";
-    }
+    die "Group sizes are mutually exclusive" if $in_usebi + $in_usetri +
+        $in_usequad + $in_usepent + $in_usehex + $in_usesept + $in_useoct > 1;
+
     die "Can either specify -chars or -toad, not both." if $in_chars and $in_toad;
-    if($in_alpha + $in_numeric + $in_special > 0 && ($in_chars or $in_toad)) {
-        die "Can either specify char classes or -chars/-toad";
-    }
+
+    die "Can either specify char classes or -chars/-toad"
+      if  $in_alpha + $in_numeric + $in_special > 0 && ($in_chars or $in_toad);
 }
 
 sub help_and_quit {
@@ -77,7 +73,9 @@ sub help_and_quit {
   Both strings (the one sent and your copy) are then printed, together with a
   Levensthein similarity distance between them (smaller = better).
 
-  (c) Erik Sonnleitner, 2017
+  (c) Erik Sonnleitner 2017. See https://github.com/esonn/cw-drill
+      es<at>delta-xi.net | erik.sonnleitner<at>fh-hagenberg.at
+
 EOF
 
     print $helptext;
@@ -103,12 +101,12 @@ sub levensthein {
 }
 
 
-# -----------------------------------------------------------------------------
+# --main code------------------------------------------------------------------
 
 &validate_args();
 &help_and_quit() if $in_help;
 
-# Default settings for CW (if in run-mode)
+# Default settings for CW
 $in_wpm = 20 if not $in_wpm;
 $in_gap = 10 if not $in_gap;
 $in_tone = 800 if not $in_tone;
@@ -138,7 +136,6 @@ if($in_chars){
 my $quantity = $ARGV[0];
 if (not defined $quantity) { $quantity = 10; }
 
-
 my @msg_arr;
 for(1..$quantity) {
     @pool = shuffle @pool;
@@ -146,10 +143,9 @@ for(1..$quantity) {
 }
 
 
-my $msg_str = "";
-my $cnt = 0;
+my ($msg_str,$cnt) = ("",0);
 foreach(@msg_arr) {
-    $cnt = $cnt + 1;
+    $cnt++;
     $msg_str .= $_;
 
     # manage grouping (single chars, bigrams, ...)
@@ -166,22 +162,32 @@ foreach(@msg_arr) {
 # Prefix with preamble if requested
 $msg_str = "cq cq cq $msg_str" if $in_preamblecq;
 $msg_str = "vvv $msg_str" if $in_preamble;
+$msg_str =~ s/\s+$//;
 
-# Print in stdout
-print "$msg_str\n" if !$in_runcw;
-
-
+# Play or print
 if($in_runcw) {
     sleep 2 if $in_wait;
+
+    # This is very dirty. Should check actual path of cw binary, should check
+    # if cw is available at all, should not rely on unnamed pipes in system().
+    # That's why I use Perl. Perl programmers are dirty by nature.
     system("echo $msg_str | cw --wpm=$in_wpm --tone=$in_tone --gap=$in_gap --vol=70 --noecho --nomessages");
-} 
+    my $in_cw_copy = <STDIN>;
+    chomp($in_cw_copy);
+
+    my $distance = &levensthein($msg_str,$in_cw_copy);
+    my $percent = (length($msg_str)-($distance)) * 100 / length($msg_str);
+
+    print "\nCW message:  $msg_str";
+    print "\nYour copy:   $in_cw_copy";
+    printf("\nYour score:  %2d\% (distance %d)\n", $percent, $distance);
+
+    if   ($percent >= 99) { print "  --Your copy was excellent! Try higher WPM.\n" }
+    elsif($percent >= 90) { print "  --Good job!\n"; }
+    elsif($percent >= 75) { print "  --Seems OK!\n"; }
+    else                  { print "  --You can do better\n"}
+} else {
+    print "$msg_str\n";
+}
 
 
-my $in_cw_copy = <STDIN>;
-chomp($in_cw_copy);
-
-print "\n";
-print "CW message:  $msg_str\n";
-print "Your copy:   $in_cw_copy\n";
-
-print "Similarity:  " . &levensthein($msg_str,$in_cw_copy) . "\n";

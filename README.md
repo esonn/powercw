@@ -6,6 +6,12 @@ available on basically all Unix-like systems and Linux distributions. You can
 input the morse sequence when it's played, and the script will then give you
 both strings for comparison, as well as a rough similarity calculation.
 
+Dependencies are low, only a Perl5 interpreter is needed for sequence
+generation, and the cw(1) utility for playback. cw(1) is packaged 
+differently in distributions: Debian has the "cw" package, Arch the "unixcw"
+package.
+
+
 ### Command-line options
 #### Character classes
     -a                    Include alphabet (a-z)
@@ -50,14 +56,14 @@ corresponding morse code. If the transmission ended, simply hit enter.
 The program will then show both texts, the one originally sent and the one
 copied by you so you can easily spot errors.
 
-The given similarity metric is calculated using the Levensthein distance.
-Providing feedback on how good your copy of the audio morse transmission was is
-not utterly simple. A character-by-character comparison could tell you how much
-% you got right, but fails even if you e.g. skip or add a character which hasn't
-been in the original sequence. Levensthein provides a reasonable trade-off,
-which doesn't suffer from this problem too much, but isn't too intuitive
-either - you get used to it (lower numbers are better). I'm sure there are
-better ways, but I tend to be lazy and prefer simple things.
+The given score is calculated using the Levensthein distance. Providing feedback
+on how good your copy of the audio morse transmission was is not utterly simple.
+A character-by-character comparison fails even if you e.g. skip or add
+a character which hasn't been in the original sequence. Levensthein provides
+a reasonable trade-off, which doesn't suffer from this problem too much but
+isn't perfect either. It roughly computes the number of wrong characters (in
+many, not all cases), from which the score percentage is calculated.
+I'm sure there are better ways, but I tend to be lazy and prefer simple things.
 
 Providing a longer gap with -gap is a good thing to start with. You should
 practice understanding morse code in close to regular speed (say, 20-25 wpm),
