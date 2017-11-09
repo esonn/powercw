@@ -161,10 +161,14 @@ $msg_str =~ s/\s+$//;
 if($in_runcw) {
     sleep 2 if $in_wait;
 
+    # I Don't care for looking up bash special chars, so I just escape them all
+    my $msg_str_escaped = $msg_str;
+    $msg_str_escaped =~ s/(.)/\\\1/g;
+
     # This is very dirty. Should check actual path of cw binary, should check
     # if cw is available at all, should not rely on unnamed pipes in system().
     # That's why I use Perl. Perl programmers are dirty by nature.
-    system("echo $msg_str | cw --wpm=$in_wpm --tone=$in_tone --gap=$in_gap --vol=70 --noecho --nomessages");
+    system("echo $msg_str_escaped | cw --wpm=$in_wpm --tone=$in_tone --gap=$in_gap --vol=70 --noecho --nomessages");
     my $in_cw_copy = <STDIN>;
     chomp($in_cw_copy);
 
