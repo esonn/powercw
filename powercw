@@ -7,14 +7,14 @@
 #
 # Wordlist taken from https://github.com/first20hours/google-10000-english,
 # please see license there (and buy him a beer)
-#
-# TODO: add numbers + special chars
+
 
 #use warnings;
 use strict;
 use List::Util qw(shuffle min);
 use Getopt::Long;
 
+# CLI Options
 my ($in_short, $in_med, $in_long, $in_preamblevvv, $in_preamblecq, $in_wait,
 $in_wpm, $in_gap, $in_tone, $in_help, $in_nocw, $in_num, $in_special, $in_list);
 
@@ -51,12 +51,12 @@ sub help_and_quit {
    -num, -n        Include numbers
    -cq             Always start with preamble 'cq cq cq '
    -pre            Always start with preamble 'vvv '
-   -wait           Wait for 2 seconds before starting cw
+   -wait           Wait for 2 seconds before starting cw(1)
    -list           Show International Morse Code table
    -nocw           Don't run cw(1), just print generated message
-   -wpm            --wpm option passed to cw (words per minute, default: 20)
-   -gap            --gap option passed to cw (time between chars, default: 10)
-   -tone           --tone option passed to cw (frequency in Hz, default: 700)
+   -wpm            --wpm option passed to cw(1) (words per minute, default: 20)
+   -gap            --gap option passed to cw(1) (time between chars, default: 8)
+   -tone           --tone option passed to cw(1) (frequency in Hz, default: 700)
    -h, -help       Show this help text
 
   $0 is a small program which assembles a word list according to the options
@@ -130,7 +130,10 @@ sub lookup_cw_binary {
 }
 
 
-# ===== Main code starts here =============================================== #
+# *************************************************************************** #
+#  Main code starts here
+# *************************************************************************** #
+#
 my @numbers = qw( 1 2 3 4 5 6 7 8 9 0 );
 #my @special = qw( . , ? = ' ) ;
 my @special = qw( . , ) ;
