@@ -111,6 +111,7 @@ EOF
 # Calculate Levensthein distance for string similarity measurement
 sub levensthein {
     my ($s, $t) = @_;
+    ($s, $t) = (lc $s, lc $t);  # all is compared lowercase only
     my $tl = length($t);
     my $sl = length($s);
     my @d = ([0 .. $tl], map { [$_] } 1 .. $sl);
