@@ -283,6 +283,7 @@ if    ($percent >= 99) { print "  --Your copy was excellent!\n" .
  elsif($percent >= 80) { print "  --Seems OK.\n"; }
  else                  { print "  --You can do better.\n"}
 
+print "    (Given at $in_wpm wpm/" . $in_wpm * 5 . " bpm, farnsworth gap $in_gap)";
 
 __END__
 s;the;
