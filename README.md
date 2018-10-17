@@ -12,11 +12,10 @@ There are 3 main modes:
 * Group mode: Give classic 5-character groups (character classes or 
     a particular list of character can be configured)
 * Word mode: Give a number of random English words of different sizes
-* German sentence mode: Assembly German sentences
+* German sentence mode: Assemble German sentences
 
 Wordlists are integrated and resemble the 10000 most used words in Google
 searches (from https://github.com/first20hours/google-10000-english).
-
 
 German sentence generator and associated data by davidak, stolen from
 https://github.com/davidak/satzgenerator - many thanks to David.
@@ -35,19 +34,19 @@ package.
     -short                Include short words (<=4 chars)
     -medium, -med         Include medium length words (<=6 chars)
     -long                 Include long words (>6 chars)
-    -numbers, -n          Include numbers (0-9) between words
+    -num, -n              Include numbers (0-9) between words
     -special, -s          Include special characters between words
 
 #### Group mode
-    -group                Enable group mode
-    -groupsize            Change number of characters per group
+    -groups               Enable group mode
+    -groupsize=<size>     Change number of characters per group
     -alpha, -a            Include alphabet (a-z)
-    -numbers, -n          Include numbers (0-9)
+    -num, -n              Include numbers (0-9)
     -special, -s          Include special characters
     -chars=<characters>   Include only given characters (invalid with (-a, -n, -s)
 
 #### German sentence generator
-    -german               Give full, randomized, syntactically correct but semantically questionable German sentences.
+    -german               Give syntactically correct but semantically questionable German sentences.
 
 #### Prefixing and initial waiting
     -cq                   Always start with preamble 'cq cq cq '
@@ -55,10 +54,14 @@ package.
     -wait                 Wait for 2 seconds before starting cw
 
 #### Play CW on audio device
-    -run                  Run cw(1) utility to echo generated string
+    -nocw                 Do not play CW code on audio device (doesn't use cw(1))
     -wpm                  --wpm option passed to cw (words per minute, default: 20)
     -gap                  --gap option passed to cw (inter-character gap, default: 10)
     -tone                 --tone option passed to cw (frequency in Hz, default: 700)
+
+#### Others
+    -l,-list              Display international morse code table
+    -h,-help              Show help
 
 
 #### Type what you here & compare to what was sent
@@ -96,4 +99,12 @@ minute.
     Your score:  87% (distance 3)
       --Seems OK!
 
+Create 8 randomized English words of medium size (4-6 chars) including random
+punctuation characters here and there.
+
+    ./powercw -med -s 8
+
+Create random German sentences, give quite fast :)
+
+    ./powercw -german -wpm 22 -gap 6
 
