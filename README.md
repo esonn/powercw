@@ -26,7 +26,7 @@ differently in distributions: Debian has the "cw" package, Arch the "unixcw"
 package.
 
 (c) Erik Sonnleitner 2018. See https://github.com/esonn/cw-drill
-    es<at>delta-xi.net | erik.sonnleitner<at>fh-hagenberg.at
+    es&lt;at&gt;delta-xi.net | erik.sonnleitner&lt;at&gt;fh-hagenberg.at
 
 
 ### Command-line options
