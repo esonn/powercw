@@ -93,10 +93,11 @@ characters "a", "d", "e", "n" and "t". Also, start the transmission with
 minute.
 
     ./powercw -chars "adent" -wpm 15 -cq -groups -groupsize 3 4
+
     cq cq cq ede aae wtn dax 
     CW message:  cq cq cq ede aae ntn dan
     Your copy:   cq cq cq ede aae wtn dax 
-    Your score:  87% (distance 3)
+    Your score:  87% (~3 errors)
       --Seems OK!
 
 Create 8 randomized English words of medium size (4-6 chars) including random
@@ -107,4 +108,10 @@ punctuation characters here and there.
 Create random German sentences, give quite fast :)
 
     ./powercw -german -wpm 22 -gap 6
+
+    CW message:  <Mein Freund wirkt cool auf einer Insel.>
+    Your copy:   <mein freund wirkt cool auf einer insel.>
+    Your score:  100% (~0 errors)
+      --Your copy was excellent!
+        Try higher WPM/lower gap/longer messages.
 
