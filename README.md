@@ -1,40 +1,53 @@
-# cw-drill: Enhance your morse (CW) skills!
-cw-drill is a simple training application for learning morse code (CW). It
-generates randomized but configurable text patterns and can play the
-corresponding morse code on an audio device using the cw(1) command line utility
-available on basically all Unix-like systems and Linux distributions. You can
-input the morse sequence when it's played, and the script will then give you
-both strings for comparison, as well as a rough similarity calculation.
+# powercw: Enhance your morse (CW) skills!
+
+powercw is a simple training application for learning morse code (CW). It
+generates/assembles strings according to given command-line options and plays it
+on your audio device using morse code. While listening, simply input every
+letter you understood (conclude with Enter). Both strings (the one given and
+your copy) are then printed, together with a how many errors you made and
+percentage you got right (using the Levensthein distance, if you're interested
+in technicalities).
+
+There are 3 main modes:
+* Group mode: Give classic 5-character groups (character classes or 
+    a particular list of character can be configured)
+* Word mode: Give a number of random English words of different sizes
+* German sentence mode: Assembly German sentences
+
+Wordlists are integrated and resemble the 10000 most used words in Google
+searches (from https://github.com/first20hours/google-10000-english).
+
+
+German sentence generator and associated data by davidak, stolen from
+https://github.com/davidak/satzgenerator - many thanks to David.
 
 Dependencies are low, only a Perl5 interpreter is needed for sequence
 generation, and the cw(1) utility for playback. cw(1) is packaged 
 differently in distributions: Debian has the "cw" package, Arch the "unixcw"
 package.
 
+(c) Erik Sonnleitner 2018. See https://github.com/esonn/cw-drill
+    es<at>delta-xi.net | erik.sonnleitner<at>fh-hagenberg.at
+
 
 ### Command-line options
-#### Character classes
-    -a                    Include alphabet (a-z)
-    -n                    Include numbers (0-9)
-    -s                    Include special characters
-    -chars=<characters>   Include only given characters
-    -toad=<num>           Include first <num> characters from toad sequence
+#### Word mode (standard mode)
+    -short                Include short words (<=4 chars)
+    -medium, -med         Include medium length words (<=6 chars)
+    -long                 Include long words (>6 chars)
+    -numbers, -n          Include numbers (0-9) between words
+    -special, -s          Include special characters between words
 
+#### Group mode
+    -group                Enable group mode
+    -groupsize            Change number of characters per group
+    -alpha, -a            Include alphabet (a-z)
+    -numbers, -n          Include numbers (0-9)
+    -special, -s          Include special characters
+    -chars=<characters>   Include only given characters (invalid with (-a, -n, -s)
 
-'MorseToad' is a free Android app to learn morse characters, with one new
-character per lession (hence the 'toad sequence'). It's great to learn the
-individual characters, but rather limited for getting used to understanding
-longer messages. Also, it's not very configurable in terms of playback speed
-and other parameters. I used it to learn the basic characters, and the -toad
-parameter is a simple way to tell the program to e.g. just include the
-first 5 characters (e.g. until lession 5) presented by MorseToad. The sequence
-is:
-
-    e t a r n d s l u k w o m h f j p c y g b i v x q z
-
-#### Grouping/help
-    -2 to -8              Give in groups of 2-8 (i.e. create words)
-    -h, -help             Show help text
+#### German sentence generator
+    -german               Give full, randomized, syntactically correct but semantically questionable German sentences.
 
 #### Prefixing and initial waiting
     -cq                   Always start with preamble 'cq cq cq '
@@ -49,7 +62,7 @@ is:
 
 
 #### Type what you here & compare to what was sent
-When -run is used, the generated sequence is played back using cw(1). During
+Unless -nocw is used, the generated sequence is played back using cw(1). During
 playback, you can just input character after character as you hear the
 corresponding morse code. If the transmission ended, simply hit enter.
 
@@ -71,21 +84,16 @@ but use longer gaps between characters and words to give your brain time to
 process what you heard (that's the Farnsworth idea).
 
 ### Example(s)
-Create 3-letter words using only the letters F, L, D and U. A total number of
-30 characters are created, and the corresponding morse code is played using
-beeps on your audio device:
+Greate 4 character groups of 3 characters each, including only the predefined
+characters "a", "d", "e", "n" and "t". Also, start the transmission with
+3 CQ calls (as usual in radio transmissions) and a speed of 15 words per
+minute.
 
-    ./cw-drill -chars "fldu" -3 -run 30
-
-
-Create 3-letter words using the first 5 letters from the toad sequence,
-prefix the transmission with 3x CQ with 12 characters in total and play
-generated sequence afterwards with 15 words per minute (listing includes output):
-
-    ./cw-drill -toad 5 -wpm 15 -cq -3 -run 12
+    ./powercw -chars "adent" -wpm 15 -cq -groups -groupsize 3 4
     cq cq cq ede aae wtn dax 
     CW message:  cq cq cq ede aae ntn dan
     Your copy:   cq cq cq ede aae wtn dax 
     Your score:  87% (distance 3)
       --Seems OK!
+
 

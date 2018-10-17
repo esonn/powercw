@@ -19,16 +19,22 @@ use List::Util qw(shuffle min);
 use Getopt::Long;
 
 # CLI Options
-my ($in_short, $in_med, $in_long, $in_preamblevvv, $in_preamblecq, $in_wait,
-$in_wpm, $in_gap, $in_tone, $in_help, $in_nocw, $in_num, $in_special, $in_list,
+my ($in_charset, $in_groups, $in_groupsize, $in_short, $in_med, $in_long, $in_preamblevvv, $in_preamblecq, $in_wait,
+$in_wpm, $in_gap, $in_tone, $in_help, $in_nocw, $in_num, $in_alpha, $in_special, $in_list,
 $in_german);
 
 GetOptions(
+    "chars=s" => \$in_charset,
+    "charset=s" => \$in_charset,
+    "groups" => \$in_groups,
+    "groupsize=i" => \$in_groupsize,
     "short" => \$in_short,
     "medium" => \$in_med,
     "med" => \$in_med,
     "long" => \$in_long,
     "german" => \$in_german,
+    "a" => \$in_alpha,
+    "alpha" => \$in_alpha,
     "n" => \$in_num,
     "num" => \$in_num,
     "s" => \$in_special,
@@ -38,9 +44,9 @@ GetOptions(
     "wait" => \$in_wait,
     "list" => \$in_list,
     "l" => \$in_list,
-    "wpm=s" => \$in_wpm,
-    "gap=s" => \$in_gap,
-    "tone=s" => \$in_tone,
+    "wpm=i" => \$in_wpm,
+    "gap=i" => \$in_gap,
+    "tone=i" => \$in_tone,
     "help" => \$in_help,
     "h" => \$in_help,
     "nocw" => \$in_nocw,
@@ -48,23 +54,29 @@ GetOptions(
 
 sub help_and_quit {
     print <<EOF;
-  Usage: $0 [number of words].
+  Usage: $0 [number of words/wordgroups].
   Options:
-   -short          Include short words (<=4 chars)
-   -medium, -med   Include medium length words (<=6 chars)
-   -long           Include long words (>6 chars)
-   -special, -s    Include punctuation/special characters
-   -num, -n        Include numbers
-   -german         German sentences! Incompatible with all previous options.
-   -cq             Always start with preamble 'cq cq cq '
-   -pre            Always start with preamble 'vvv '
-   -wait           Wait for 2 seconds before starting cw(1)
-   -list           Show International Morse Code table
-   -nocw           Don't run cw(1), just print generated message
-   -wpm            --wpm option passed to cw(1) (words per minute, default: 20)
-   -gap            --gap option passed to cw(1) (time between chars, default: 8)
-   -tone           --tone option passed to cw(1) (frequency in Hz, default: 700)
-   -h, -help       Show this help text
+   -groups            Group mode: Give character groups with random content
+   -groupsize=<size>  Group mode: Change number of characters per group 
+   -alpha, -a         Group mode: Include standard alphabet
+   -chars=<string>    Group mode: Include pre-defined set of characters only.
+                                  Can't be used with -special, -num, -alpha
+   -special, -s       Word/Group mode: Include punctuation/special characters
+   -num, -n           Word/Group mode: Include numbers
+   -short             Word mode: Include short words (<=4 chars)
+   -medium, -med      Word mode: Include medium length words (<=6 chars)
+   -long              Word mode: Include long words (>6 chars)
+   -german            German sentence generator: Incompatible with all previous options.
+
+   -cq                Always start with preamble 'cq cq cq '
+   -pre               Always start with preamble 'vvv '
+   -wait              Wait for 2 seconds before starting cw(1)
+   -list              Show International Morse Code table
+   -nocw              Don't run cw(1), just print generated message
+   -wpm=<wpm>         --wpm option passed to cw(1) (words per minute, default: 20)
+   -gap=<gap>         --gap option passed to cw(1) (time between chars, default: 8)
+   -tone=<Hz>         --tone option passed to cw(1) (frequency in Hz, default: 700)
+   -h, -help          Show this help text
 
   $0 is a small program which assembles a word list according to the options
   above and plays it on your audio device using morse code. While listening,
@@ -73,12 +85,20 @@ sub help_and_quit {
   percent of the text you got right (using the Levensthein distance, if you're
   interested in technicalities).
 
+  Group mode: Give classic 5-character groups (adjustable, of course)
+  Word mode: Give random English words of different size
+  German sentence mode: Assembly German sentences
+
   Wordlists are integrated and resemble the 10000 most used words in Google
   searches (from https://github.com/first20hours/google-10000-english).
 
-  The cw(1) utility is necessary to use this program as intended.
+  German sentence generator and associated data by davidak, stolen from
+   https://github.com/davidak/satzgenerator - many thanks to David.
 
-  (c) Erik Sonnleitner 2017. See https://github.com/esonn/cw-drill
+  The cw(1) utility is necessary to use this program as intended (unless
+  you use -nocw).
+
+  (c) Erik Sonnleitner 2018. See https://github.com/esonn/cw-drill
       es<at>delta-xi.net | erik.sonnleitner<at>fh-hagenberg.at
 EOF
     exit;
@@ -179,9 +199,10 @@ sub sg_satz {
 #  Main code starts here
 # *************************************************************************** #
 #
+my @alphabet = qw( a b c d e f g h i j k l m n o p q r s t u v w x y z );
 my @numbers = qw( 1 2 3 4 5 6 7 8 9 0 );
-#my @special = qw( . , ? = ' ) ;
-my @special = qw( . , ) ;
+my @special = qw( . , ? = ' ) ;
+#my @special = qw( . , ) ;
 
 
 &help_and_quit if $in_help;
@@ -195,6 +216,7 @@ print ">> Warning: cw(1) not installed - audio playback disabled.\n"
 $in_wpm = 20 if not $in_wpm;
 $in_gap = 8 if not $in_gap;
 $in_tone = 800 if not $in_tone;
+$in_groupsize = 5 if not $in_groupsize;
 my $num_words = $ARGV[0] || 4;
 
 
@@ -223,15 +245,47 @@ push @pool, @med if $in_med;
 push @pool, @long if $in_long;
 @pool = (@short, @med, @long) if !@pool;
 
+# -german? Disallow other modes
 if($in_german and ($in_long or $in_short or $in_med or $in_num or $in_special)){
-    print "Uh-oh, you can't use -long/-short/-medium/-special/-num when using -german.\n";
+    print "Uh-oh, you can't use -long/-short/-medium/-special/-num/-groups when using -german.\n";
     exit 1;
 }
+
+# -groups? Disallow other modes
+if($in_groups and ($in_long or $in_short or $in_med)){
+    print "Uh-oh, you can't use -groups together with -long/-short/-medium/-special/-num/-german";
+    exit 1;
+}
+
 
 
 my $msg;
 if($in_german){
     $msg = "" . sg_satz();
+} elsif($in_groups) {
+    my @grouppool = ();
+    my @in_chars_arr = split //, $in_charset;
+
+    if($in_charset) {
+        push(@grouppool,@in_chars_arr);
+    } else {
+        push(@grouppool,@alphabet) if $in_alpha;
+        push(@grouppool,@numbers) if $in_num;
+        push(@grouppool,@special) if $in_special;
+    }
+    @grouppool = (@alphabet,@numbers,@special) if !@grouppool;
+
+    my @msg_arr;
+    for(1..$num_words){
+        for(1..$in_groupsize) {
+            @grouppool = shuffle @grouppool;
+            push @msg_arr, $grouppool[0];
+        }
+        push @msg_arr, " ";
+    }
+
+    chomp(@msg_arr);
+    $msg = join("", @msg_arr);
 } else {
     for(1..$num_words){
 
@@ -283,7 +337,6 @@ if    ($percent >= 99) { print "  --Your copy was excellent!\n" .
  elsif($percent >= 80) { print "  --Seems OK.\n"; }
  else                  { print "  --You can do better.\n"}
 
-print "    (Given at $in_wpm wpm/" . $in_wpm * 5 . " bpm, farnsworth gap $in_gap)";
 
 __END__
 s;the;
