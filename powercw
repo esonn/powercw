@@ -74,7 +74,7 @@ sub help_and_quit {
    -list              Show International Morse Code table
    -nocw              Don't run cw(1), just print generated message
    -wpm=<wpm>         --wpm option passed to cw(1) (words per minute, default: 20)
-   -gap=<gap>         --gap option passed to cw(1) (time between chars, default: 8)
+   -gap=<gap>         --gap option passed to cw(1) (time between chars, default: 6)
    -tone=<Hz>         --tone option passed to cw(1) (frequency in Hz, default: 700)
    -h, -help          Show this help text
 
@@ -214,7 +214,7 @@ print ">> Warning: cw(1) not installed - audio playback disabled.\n"
     if $cw_path eq "";
 
 $in_wpm = 20 if not $in_wpm;
-$in_gap = 8 if not $in_gap;
+$in_gap = 6 if not $in_gap;
 $in_tone = 800 if not $in_tone;
 $in_groupsize = 5 if not $in_groupsize;
 my $num_words = $ARGV[0] || 4;
