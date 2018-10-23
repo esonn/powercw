@@ -215,7 +215,7 @@ print ">> Warning: cw(1) not installed - audio playback disabled.\n"
 
 $in_wpm = 20 if not $in_wpm;
 $in_gap = 6 if not $in_gap;
-$in_tone = 800 if not $in_tone;
+$in_tone = 600 if not $in_tone;
 $in_groupsize = 5 if not $in_groupsize;
 my $num_words = $ARGV[0] || 4;
 
@@ -10452,7 +10452,7 @@ g_ort;auf dem Sofa;
 g_ort;auf dem Weg zur Arbeit;
 g_ort;auf dem Weg zur Schule;
 g_ort;auf dem Weihnachtsmarkt;
-g_ort;auf dem Straßenfest;
+g_ort;auf dem Strassenfest;
 g_ort;auf dem elektrischen Stuhl;
 g_ort;auf dem Rasen;
 g_ort;auf der Arbeit;
@@ -10633,7 +10633,7 @@ g_verb;faehrt;
 g_verb;faellt;
 g_verb;gammelt;
 g_verb;geht;
-g_verb;genießt;
+g_verb;geniesst;
 g_verb;gestaltet;
 g_verb;gleitet;
 g_verb;grummelt;
