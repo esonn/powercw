@@ -21,7 +21,7 @@ use Getopt::Long;
 # CLI Options
 my ($in_charset, $in_groups, $in_groupsize, $in_short, $in_med, $in_long, $in_preamblevvv, $in_preamblecq, $in_wait,
 $in_wpm, $in_gap, $in_tone, $in_help, $in_nocw, $in_num, $in_alpha, $in_special, $in_list,
-$in_german);
+$in_german, $in_config, $in_logfile);
 
 GetOptions(
     "chars=s" => \$in_charset,
@@ -50,6 +50,8 @@ GetOptions(
     "help" => \$in_help,
     "h" => \$in_help,
     "nocw" => \$in_nocw,
+    "config" => \$in_config,
+    "logfile" => \$in_logfile,
 );
 
 sub help_and_quit {
@@ -72,6 +74,7 @@ sub help_and_quit {
    -pre               Always start with preamble 'vvv '
    -wait              Wait for 2 seconds before starting cw(1)
    -list              Show International Morse Code table
+   -logfile           Specify CSV file to log your runs (default: ~/.powercw.csv)
    -nocw              Don't run cw(1), just print generated message
    -wpm=<wpm>         --wpm option passed to cw(1) (words per minute, default: 20)
    -gap=<gap>         --gap option passed to cw(1) (time between chars, default: 6)
@@ -209,6 +212,7 @@ my @special = qw( . , ? = ' ) ;
 &list_morse_table_and_quit if $in_list;
 
 
+my $in_logfile = $ENV{"HOME"} . "/.powercw.csv" if not $in_logfile;
 my $cw_path = &lookup_cw_binary;
 print ">> Warning: cw(1) not installed - audio playback disabled.\n"
     if $cw_path eq "";
@@ -337,6 +341,13 @@ if    ($percent >= 99) { print "  --Your copy was excellent!\n" .
  elsif($percent >= 80) { print "  --Seems OK.\n"; }
  else                  { print "  --You can do better.\n"}
 
+
+# Log attempt to file
+open(my $fh, '>>', $in_logfile) or die "Error opening logfile: $!";
+print $fh "Timestamp;WPM;Gap;%correct;#errors;message;copy;\n" if ! -e $in_logfile or -z $in_logfile;
+print $fh localtime . ";$in_wpm;$in_gap;$percent;$distance;$msg;$cw_copy;\n";
+#printf $fh "%s;%d;%d;%2d;%d;%s;%s;\n", localtime, $in_wpm, $in_gap, $percent, $distance, $msg, $cw_copy;
+close $fh;
 
 __END__
 s;the;
