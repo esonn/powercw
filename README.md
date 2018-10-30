@@ -25,7 +25,7 @@ generation, and the cw(1) utility for playback. cw(1) is packaged
 differently in distributions: Debian has the "cw" package, Arch the "unixcw"
 package.
 
-(c) Erik Sonnleitner 2018. See https://github.com/esonn/cw-drill
+(c) Erik Sonnleitner 2018. See https://github.com/esonn/powercw
     es&lt;at&gt;delta-xi.net | erik.sonnleitner&lt;at&gt;fh-hagenberg.at
 
 
