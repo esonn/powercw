@@ -290,6 +290,8 @@ if($in_german){
 
     chomp(@msg_arr);
     $msg = join("", @msg_arr);
+    #chomp($msg);
+    $msg =~ s/ $//g;
 } else {
     for(1..$num_words){
 
@@ -10727,6 +10729,7 @@ g_verb;strickt;
 g_verb;erholt sich;
 g_verb;bewegt sich;
 g_verb;bepisst sich;
+g_verb;programmiert;
 g_vn_m;Aaron;
 g_vn_m;Abdul;
 g_vn_m;Achim;
@@ -11670,7 +11673,6 @@ g_vn_w;Lilli;
 g_vn_w;Lilly;
 g_vn_w;Lina;
 g_vn_w;Linda;
-g_vn_w;Linn;
 g_vn_w;Lisa;
 g_vn_w;Liselotte;
 g_vn_w;Liv;
