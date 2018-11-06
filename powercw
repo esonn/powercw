@@ -17,6 +17,8 @@
 use strict;
 use List::Util qw(shuffle min);
 use Getopt::Long;
+#use Math::Random::Secure qw(rand);
+
 
 # CLI Options
 my ($in_charset, $in_groups, $in_groupsize, $in_short, $in_med, $in_long, $in_preamblevvv, $in_preamblecq, $in_wait,
@@ -160,6 +162,17 @@ sub lookup_cw_binary {
     $cwpath;
 }
 
+# a shuffle which works much better than pure List::Util shuffle
+sub fisher_yates_shuffle {
+    my $array = shift;
+    my $i;
+    for ($i = @$array; --$i; ) {
+        my $j = int rand ($i+1);
+        next if $i == $j;
+        @$array[$i,$j] = @$array[$j,$i];
+    }
+}
+
 
 ### Shamelessly stolen from https://github.com/davidak/satzgenerator - thx!
 my (@ger_vn_m,@ger_vn_w,@ger_adj,@ger_ort,@ger_verb);
@@ -283,6 +296,7 @@ if($in_german){
     for(1..$num_words){
         for(1..$in_groupsize) {
             @grouppool = shuffle @grouppool;
+            fisher_yates_shuffle(\@grouppool); # works *much* better
             push @msg_arr, $grouppool[0];
         }
         push @msg_arr, " ";
@@ -296,6 +310,7 @@ if($in_german){
     for(1..$num_words){
 
         @pool = shuffle @pool;
+        fisher_yates_shuffle(\@pool);
         $msg .= " " if $_ != 1;
 
         # When numbers are enabled, give number every ~5 words
@@ -309,6 +324,7 @@ if($in_german){
         # if special chars are enabled, give after every ~4th word
         if($in_special and int(rand(4)) == 0){
             @special = shuffle @special;
+            fisher_yates_shuffle(\@special);
             $msg .= $special[0];
         }
     }
