@@ -64,7 +64,7 @@ package.
     -h,-help              Show help
 
 
-#### Type what you here & compare to what was sent
+#### Type what you hear & compare to what was sent
 Unless -nocw is used, the generated sequence is played back using cw(1). During
 playback, you can just input character after character as you hear the
 corresponding morse code. If the transmission ended, simply hit enter.
